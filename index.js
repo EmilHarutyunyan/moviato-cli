@@ -142,10 +142,7 @@ async function writeMovie(
     },
     {
       onCancel: async () => {
-        const title = chalkAnimation.rainbow("Operation cancelled. \n");
-        await setTimeout(2000);
-        title.stop();
-        process.exit(0);
+        await operationCancel();
       },
     }
   );
@@ -179,6 +176,14 @@ async function addMovie() {
   }
 }
 
+// Operaction cancel
+async function operationCancel() {
+  const title = chalkAnimation.rainbow("Operation cancelled. \n");
+  await setTimeout(2000);
+  title.stop();
+  process.exit(0);
+}
+
 // Welcome show
 async function welcome() {
   console.clear();
@@ -193,6 +198,10 @@ async function mainMenu() {
     message: "What do you want to do with the movie list?",
     initialValue: "Custom add",
     options: [
+      {
+        value: ["show"],
+        label: "Show movies",
+      },
       {
         value: ["sort", "name"],
         label: "Sort movies by movie name",
@@ -222,10 +231,6 @@ async function mainMenu() {
         label: "Delete movie",
       },
       {
-        value: ["show"],
-        label: "Show movies",
-      },
-      {
         value: ["edit"],
         label: "Edit movie",
       },
@@ -240,6 +245,9 @@ async function mainMenu() {
     ],
   });
 
+  if(movieAction[0] === "show") {
+    console.table(movies)
+  }
   if (movieAction[0] === "sort") {
     for (let i = 1; i < movieAction.length; i++) {
       const newSortMovie = await sortMovie(movieAction[i]);
@@ -260,11 +268,7 @@ async function mainMenu() {
     console.table(movies);
   }
   if (movieAction[0] === "exit") {
-    const title = chalkAnimation.rainbow("Operation cancelled. \n");
-    await setTimeout(2000);
-    title.stop();
-
-    process.exit(0);
+    await operationCancel();
   }
   if (movieAction[0] === "clear") {
     movies = [];
@@ -287,11 +291,7 @@ async function main() {
     ],
   });
   if (p.isCancel(movieList)) {
-    const title = chalkAnimation.rainbow("Operation cancelled. \n");
-    await setTimeout(2000);
-    title.stop();
-
-    process.exit(0);
+    await operationCancel();
   }
   if (movieList === "default") movies.push(...defaultMovie);
 
